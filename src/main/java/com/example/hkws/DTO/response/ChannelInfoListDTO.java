@@ -3,8 +3,6 @@ package com.example.hkws.DTO.response;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 通道信息
  */

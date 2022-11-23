@@ -2,18 +2,12 @@ package com.example.hkws.DTO.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NonNull;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 
 /**
  * 查询条件
- *
  */
 @Data
 public class LoginDTO {

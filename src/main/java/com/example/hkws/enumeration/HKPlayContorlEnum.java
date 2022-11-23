@@ -4,7 +4,7 @@ import com.example.hkws.service.Linux.HCNetSDK;
 
 /**
  * 错误码
- * 
+ *
  * @创建日期 : 2018年10月23日
  * @作者 : GS_MASTER
  */
@@ -15,7 +15,7 @@ public enum HKPlayContorlEnum {
     private Integer code;
     private String msg;
 
-    private  Integer value;
+    private Integer value;
 
     private HKPlayContorlEnum(Integer code, String msg) {
         this.code = code;

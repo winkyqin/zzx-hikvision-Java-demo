@@ -6,7 +6,6 @@ import lombok.Data;
 
 /**
  * 查询条件
- *
  */
 @Data
 public class HistoryDTO {

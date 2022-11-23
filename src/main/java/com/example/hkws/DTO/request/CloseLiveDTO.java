@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * 查询条件
- *
  */
 @Data
 public class CloseLiveDTO {

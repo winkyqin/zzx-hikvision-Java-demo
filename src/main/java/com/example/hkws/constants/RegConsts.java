@@ -4,101 +4,100 @@ import java.util.regex.Pattern;
 
 /**
  * 正则表达式
- * @创建日期	2019年1月9日
- * @作者	二狗
+ *
+ * @创建日期 2019年1月9日
+ * @作者 二狗
  */
 public class RegConsts {
-	
-	public static void main(String[] args) {
-		System.out.println(Pattern.matches(RegConsts.REGEX_COMPLEX_PWD, "!chenguan1"));
-	}
-	
-	/**
-	 * 数字和英文组成
-	 */
-	public static final String REGEX_FIGURE_ENGLISH = "^[A-Za-z0-9]{4,40}$";
-	
-	/**
-	 * 中文、英文、数字包括下划线
-	 */
-	public static final String REGEX_EXPECT_SPECIAL_CHARACTER = "^[\\u4E00-\\u9FA5A-Za-z0-9_]+$";
-	
-	
-	/**
+
+    public static void main(String[] args) {
+        System.out.println(Pattern.matches(RegConsts.REGEX_COMPLEX_PWD, "!chenguan1"));
+    }
+
+    /**
+     * 数字和英文组成
+     */
+    public static final String REGEX_FIGURE_ENGLISH = "^[A-Za-z0-9]{4,40}$";
+
+    /**
+     * 中文、英文、数字包括下划线
+     */
+    public static final String REGEX_EXPECT_SPECIAL_CHARACTER = "^[\\u4E00-\\u9FA5A-Za-z0-9_]+$";
+
+
+    /**
      * 5-20位，大小写字母
      */
     public static final String REGEX_USERNAME = "^[a-zA-Z]\\w{5,20}$";
- 
+
     /**
      * 密码(以字母开头，长度在6~18之间，只能包含字母、数字和下划线)
      */
     public static final String REGEX_PASSWORD = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$";
-    
+
     /**
      * 强密码(必须包含大小写字母和数字的组合，不能使用特殊字符，长度在 8-10 之间)
      */
-    public static final String REGEX_STONG_PASSWORD_EXPECT_SPECIAL_CHARACTER = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,10}$"; 
-    
+    public static final String REGEX_STONG_PASSWORD_EXPECT_SPECIAL_CHARACTER = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,10}$";
+
     /**
      * 复杂（同时包含数字，字母，特殊符号）
      */
     public static final String REGEX_COMPLEX_PWD = "^^(?![a-zA-z]+$)(?!\\d+$)(?![!@#$%^&*_-]+$)(?![a-zA-z\\d]+$)(?![a-zA-z!@#$%^&*_-]+$)(?![\\d!@#$%^&*_-]+$)[a-zA-Z\\d!@#$%^&*_-]+$";
- 
+
     /**
      * 强密码(必须包含大小写字母和数字的组合，可以使用特殊字符，长度在8-10之间)
      */
-    public static final String REGEX_STONG_PASSWORD_INCLUDE_SPECIAL_CHARACTER = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$"; 
-    
-    
+    public static final String REGEX_STONG_PASSWORD_INCLUDE_SPECIAL_CHARACTER = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$";
+
+
     /**
      * 国内手机号
      * 0?(13|14|15|17|18|19)[0-9]{9}
      */
     public static final String REGEX_MOBILE = "^((17[0-9])|(14[0-9])|(13[0-9])|(15[^4,\\\\D])|(18[0,5-9]))\\\\d{8}$";
-    
+
     /**
-     *验证国内电话号
+     * 验证国内电话号
      */
     public static final String REGEX_TEL = "\\d{3}-\\d{8}|\\d{4}-\\d{7}";
-    
+
     /**
      * 邮箱
      */
     public static final String REGEX_EMAIL = "\\w[-\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}";
- 
+
     /**
      * 汉字
      */
     public static final String REGEX_CHINESE = "^[\u4e00-\u9fa5],{0,}$";
- 
+
     /**
      * 身份证
      */
     public static final String REGEX_ID_CARD = "(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}[0-9Xx]$)";
- 
+
     /**
      * HTTP URL
      */
     public static final String REGEX_HTTP_S_URL = "http(s)?://([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?";
-    
+
     /**
      * 所有url
      */
     public static final String REGEX_URL = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+";
- 
+
     /**
      * IP地址
      */
     public static final String REGEX_IP_ADDR = "(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)";
 
-	/**
-	 * 邮编
-	 */
+    /**
+     * 邮编
+     */
     public static final String REGEX_POSTCODE = "^[1-9]\\d{5}$";
-    
-    
-    
-    
+
+
 //    一、校验数字的表达式
 //    数字：^[0-9]*$
 //    n位的数字：^\d{n}$
@@ -167,5 +166,5 @@ public class RegConsts {
 //    中国邮政编码：[1-9]\d{5}(?!\d) (中国邮政编码为6位数字)
 //    IP地址：((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))
 //    
-    
+
 }

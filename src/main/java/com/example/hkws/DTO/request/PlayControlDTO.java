@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  * 查询条件
- *
  */
 @Data
 public class PlayControlDTO {

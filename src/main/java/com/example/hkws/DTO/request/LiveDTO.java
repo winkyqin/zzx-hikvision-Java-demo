@@ -3,12 +3,9 @@ package com.example.hkws.DTO.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 
 /**
  * 查询条件
- *
  */
 @Data
 public class LiveDTO {
