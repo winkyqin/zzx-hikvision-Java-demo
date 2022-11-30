@@ -14,7 +14,6 @@ public enum HKPlayContorlEnum {
 
     private Integer code;
     private String msg;
-
     private Integer value;
 
     private HKPlayContorlEnum(Integer code, String msg) {

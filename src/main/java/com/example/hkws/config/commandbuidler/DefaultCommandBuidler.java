@@ -1,4 +1,4 @@
-package com.example.hkws.commandbuidler;
+package com.example.hkws.config.commandbuidler;
 
 
 import com.example.hkws.CommandManager;

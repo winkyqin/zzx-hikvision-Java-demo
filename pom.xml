@@ -84,17 +84,17 @@
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>com.sun.jna.examples</groupId>
-            <artifactId>test</artifactId>
-            <version>1.0</version>
+<!--        <dependency>-->
+<!--            <groupId>com.sun.jna.examples</groupId>-->
+<!--            <artifactId>test</artifactId>-->
+<!--            <version>1.0</version>-->
 
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jna</groupId>
-            <artifactId>test</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.sun.jna</groupId>-->
+<!--            <artifactId>test</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -115,6 +115,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${ali.jason.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -32,9 +32,6 @@ public final class SMSContentConsts {
     /**
      *
      */
-    /**
-     *
-     */
     public static final Integer PASS = 7;
 
     public static final Integer STORAGE = 8;

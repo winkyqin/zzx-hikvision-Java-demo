@@ -93,7 +93,6 @@ public class ZipUtils {
                     zos.putNextEntry(new ZipEntry(name + "/"));
                     zos.closeEntry();
                 }
-
             } else {
                 for (File file : listFiles) {
                     if (KeepDirStructure) {
@@ -102,7 +101,6 @@ public class ZipUtils {
                     } else {
                         compress(file, zos, file.getName(), KeepDirStructure);
                     }
-
                 }
             }
         }

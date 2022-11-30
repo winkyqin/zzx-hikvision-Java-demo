@@ -1,9 +1,9 @@
 package com.example.hkws;
 
 
-import com.example.hkws.commandbuidler.CommandAssembly;
-import com.example.hkws.commandbuidler.CommandAssemblyImpl;
-import com.example.hkws.commandbuidler.CommandBuidler;
+import com.example.hkws.config.commandbuidler.CommandAssembly;
+import com.example.hkws.config.commandbuidler.CommandAssemblyImpl;
+import com.example.hkws.config.commandbuidler.CommandBuidler;
 import com.example.hkws.data.CommandTasker;
 import com.example.hkws.data.TaskDao;
 import com.example.hkws.data.TaskDaoImpl;

@@ -9,14 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 测试
- *
- * @author eguid
- * @version 2017年10月13日
- * @since jdk1.7
- */
-public class Test {
+public class Test2 {
     /**
      * 命令组装器测试
      *
@@ -26,7 +19,8 @@ public class Test {
         CommandManager manager = new CommandManagerImpl();
         Map<String, String> map = new HashMap<String, String>();
         map.put("appName", "test123");
-        map.put("input", "rtsp://admin:admin@192.168.2.236:37779/cam/realmonitor?channel=1&subtype=0");
+        //map.put("input", "rtsp://admin:admin@192.168.2.236:37779/cam/realmonitor?channel=1&subtype=0");
+        map.put("input", "rtsp://admin:kpr123456@192.100.1.97:554/Streaming/Channels/2");
         map.put("output", "rtmp://192.168.30.21/live/");
         map.put("codec", "h264");
         map.put("fmt", "flv");
@@ -58,7 +52,6 @@ public class Test {
         //测试多个任何同时执行和停止情况
         //默认方式发布任务
         manager.start("tomcat", "ffmpeg -i rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov -vcodec copy -acodec copy -f flv -y rtmp://106.14.182.20:1935/rtmp/tomcat");
-
         Thread.sleep(30000);
         // 停止全部任务
         manager.stopAll();
@@ -75,7 +68,6 @@ public class Test {
         //测试多个任何同时执行和停止情况
         //默认方式发布任务
         manager.start("tomcat", "D:/TestWorkspaces/FFmpegCommandHandler/src/cc/eguid/FFmpegCommandManager/ffmpeg/ffmpeg -i rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov -vcodec copy -acodec copy -f flv -y rtmp://106.14.182.20:1935/rtmp/tomcat", true);
-
         Thread.sleep(30000);
         // 停止全部任务
         manager.stopAll();
@@ -101,7 +93,6 @@ public class Test {
         manager.start("tomcat7", "ffmpeg -i rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov -vcodec copy -acodec copy -f flv -y rtmp://106.14.182.20:1935/rtmp/tomcat7", false);
         manager.start("tomcat8", "ffmpeg -i rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov -vcodec copy -acodec copy -f flv -y rtmp://106.14.182.20:1935/rtmp/tomcat8", false);
         manager.start("tomcat9", "ffmpeg -i rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov -vcodec copy -acodec copy -f flv -y rtmp://106.14.182.20:1935/rtmp/tomcat9", false);
-
         Thread.sleep(30000);
         // 停止全部任务
         manager.stopAll();

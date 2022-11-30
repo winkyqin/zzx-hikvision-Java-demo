@@ -98,8 +98,15 @@ public final class ProjectStatusConsts {
      * @Author: zzx
      * @Date: 2019-09-02
      **/
-    public static final String[] PROJECTCATEGORYLIST = {"市重点建设项目新动工", "市重点建设项目续建", "市重点建设项目前期预备",
-            "县十件民生工程", "县十件民生实事", "省重点建设项目新动工", "省重点建设项目续建", "省重点建设项目前期预备"};
+    public static final String[] PROJECTCATEGORYLIST = {
+            "市重点建设项目新动工",
+            "市重点建设项目续建",
+            "市重点建设项目前期预备",
+            "县十件民生工程",
+            "县十件民生实事",
+            "省重点建设项目新动工",
+            "省重点建设项目续建",
+            "省重点建设项目前期预备"};
 
     /**
      * @Description: 导出excel前要根据projectType再进行一次分类

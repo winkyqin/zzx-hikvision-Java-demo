@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableCaching
 public class HkwsApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(HkwsApplication.class, args);
     }
