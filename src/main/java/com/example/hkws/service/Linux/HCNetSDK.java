@@ -2949,6 +2949,7 @@ DVR实现巡航数据结构
         public int dwAChanNum;                    //最大模拟通道个数
         public int dwDChanNum;                  //数字通道个数
         public int dwStartDChan;                    //起始数字通道
+
         public byte[] byAnalogChanEnable = new byte[MAX_CHANNUM_V30];    /* 模拟通道是否启用，从低到高表示1-64通道，0表示无效 1有效 */
         public NET_DVR_IPDEVINFO_V31[] struIPDevInfo = (NET_DVR_IPDEVINFO_V31[]) new NET_DVR_IPDEVINFO_V31().toArray(MAX_IP_DEVICE_V40);      /* IP设备 */
         public NET_DVR_STREAM_MODE[] struStreamMode = (NET_DVR_STREAM_MODE[]) new NET_DVR_STREAM_MODE().toArray(MAX_CHANNUM_V30);

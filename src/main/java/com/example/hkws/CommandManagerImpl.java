@@ -89,6 +89,7 @@ public class CommandManagerImpl implements CommandManager {
             System.err.println("配置文件加载失败！配置文件不存在或配置错误");
             return;
         }
+
         boolean iskeepalive = false;
         if (size == null) {
             size = config.getSize() == null ? 10 : config.getSize();
@@ -115,7 +116,6 @@ public class CommandManagerImpl implements CommandManager {
         if (this.commandAssembly == null) {
             this.commandAssembly = new CommandAssemblyImpl();
         }
-
     }
 
     public void setTaskDao(TaskDao taskDao) {
@@ -183,22 +183,24 @@ public class CommandManagerImpl implements CommandManager {
             System.err.println("配置未正确加载，无法执行");
             return null;
         }
+
         // 参数是否符合要求
         if (assembly == null || assembly.isEmpty() || !assembly.containsKey("appName")) {
             System.err.println("参数不正确，无法执行");
             return null;
         }
+
         String appName = (String) assembly.get("appName");
         if (appName != null && "".equals(appName.trim())) {
             System.err.println("appName不能为空");
             return null;
         }
+
         assembly.put("ffmpegPath", config.getPath() + "ffmpeg");
         String command = commandAssembly.assembly(assembly);
         if (command != null) {
             return start(appName, command, true);
         }
-
         return null;
     }
 
@@ -209,6 +211,7 @@ public class CommandManagerImpl implements CommandManager {
             System.err.println("配置未正确加载，无法执行");
             return null;
         }
+
         String command = commandBuidler.get();
         if (command != null) {
             return start(id, command, true);
@@ -225,6 +228,7 @@ public class CommandManagerImpl implements CommandManager {
         if (id != null && taskDao.isHave(id)) {
             if (config.isDebug())
                 System.out.println("正在停止任务：" + id);
+
             CommandTasker tasker = taskDao.get(id);
             log.info("tasker.getProcess()" + (tasker.getProcess()));
             log.info("tasker.getThread()" + tasker.getThread());
@@ -237,8 +241,8 @@ public class CommandManagerImpl implements CommandManager {
                 log.info("已停止任务：" + id);
                 return true;
             }
-
         }
+
         System.err.println("停止任务失败！id=" + id);
         return false;
     }
@@ -256,6 +260,7 @@ public class CommandManagerImpl implements CommandManager {
                 index++;
             }
         }
+
         if (config.isDebug())
             System.out.println("停止了" + index + "个任务！");
         return index;

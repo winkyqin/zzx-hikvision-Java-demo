@@ -33,6 +33,7 @@ public class Test {
         map.put("fps", "25");
         map.put("rs", "640x360");
         map.put("twoPart", "2");
+
         // 执行任务，id就是appName，如果执行失败返回为null
         String id = manager.start(map);
         System.out.println(id);

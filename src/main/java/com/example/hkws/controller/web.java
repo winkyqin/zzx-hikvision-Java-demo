@@ -561,7 +561,7 @@ public class web {
         m_strIpparaCfg.read();
 
         if (!bRet) {
-            //设备不支持,则表示没有IP通道
+            //设备不支持,则表示没有IP通道byChanNum
             for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
 
             }

@@ -48,6 +48,7 @@ public class AutoKillTask {
             String ip = id.replace("history", "");
             try {
                 restTemplate.getForObject("http://" + ip, String.class);
+
             } catch (Exception e) {
                 web.manager.stop(ip);
                 log.info(ip + "摄像头访问异常，请检查");

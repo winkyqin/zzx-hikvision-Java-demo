@@ -9,6 +9,7 @@ import com.example.hkws.callback.EventCallBackType;
  * @author eguid
  */
 public class TaskerEventMsg {
+    
     EventCallBackType ecbt;
     CommandTasker tasker;
 

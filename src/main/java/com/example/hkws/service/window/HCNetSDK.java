@@ -28,8 +28,7 @@ import com.sun.jna.win32.StdCallLibrary;
 //SDK接口说明,HCNetSDK.dll
 public interface HCNetSDK extends StdCallLibrary {
 
-    HCNetSDK INSTANCE = (HCNetSDK) Native.loadLibrary("HCNetSDK",
-            HCNetSDK.class);
+    HCNetSDK INSTANCE = (HCNetSDK) Native.loadLibrary("HCNetSDK", HCNetSDK.class);
     /***宏定义***/
     //常量
 
