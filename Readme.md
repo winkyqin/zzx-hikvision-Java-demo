@@ -5,8 +5,6 @@ tags:
 - java springBoot
 categories: 
 - java springBoot
-
-
 ---
 
 ### 一：下载海康JAVA-DEMO
@@ -88,8 +86,6 @@ http {
     server {
         listen      8080;
 		
-
-		
         location / {
             root html;
         }
@@ -119,8 +115,6 @@ http {
 在文件中找到nginx.exe，双击启动
 
 三：在cmd中使用 ffmpeg命令 ,'home'随便命名的
-
-
 
 ```
 ffmpeg -re  -rtsp_transport tcp -i "rtsp://admin:password@192.168.123.200/Streaming/Channels/101?transportmode=unicast" -f flv -vcodec h264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 640*360 -q 10 "rtmp://localhost:1935/live/home"

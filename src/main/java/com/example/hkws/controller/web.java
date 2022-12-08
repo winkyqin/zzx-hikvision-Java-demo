@@ -81,32 +81,26 @@ public class web {
 
     static class FExceptionCallBack_Imp implements HCNetSDK.FExceptionCallBack {
         public void invoke(int dwType, int lUserID, int lHandle, Pointer pUser) {
-            System.out.println("异常事件类型:"+dwType);
+            System.out.println("异常事件类型:" + dwType);
         }
     }
 
     @PostMapping("/login")
     public ResultDTO login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) throws GlobalException {
-
         int lUserID = 0;//用户句柄
-
-
         System.out.println("login:" + loginDTO.toString());
         System.out.println("hCNetSDK:" + hCNetSDK);
         boolean initSuc = hCNetSDK.NET_DVR_Init();
         System.out.println("initSuc:" + initSuc);
-
         //初始化判断
         if (!initSuc) {
             return ResultDTO.of(ResultEnum.ERROR).setData("初始化失败");
         }
-
         //设置异常消息回调
-        FExceptionCallBack_Imp fExceptionCallBack  = null;
+        FExceptionCallBack_Imp fExceptionCallBack = null;
         if (fExceptionCallBack == null) {
             fExceptionCallBack = new FExceptionCallBack_Imp();
         }
-
         Pointer pUser = null;
         if (!hCNetSDK.NET_DVR_SetExceptionCallBack_V30(0, 0, fExceptionCallBack, pUser)) {
             return null;
@@ -149,8 +143,8 @@ public class web {
         session.setAttribute("m_sDeviceIP", m_sDeviceIP);
         session.setAttribute("lUserID", lUserID);
         List<String> channelList = CreateDeviceChannel(lUserID, m_strDeviceInfo);
-
         System.out.println("channelList" + channelList);
+
         return ResultDTO.of(ResultEnum.SUCCESS).setData(channelList);
     }
 
@@ -205,7 +199,17 @@ public class web {
         if (Objects.isNull(info)) {
             //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
             try {
-                String result = manager.start(channelName, "ffmpeg   -rtsp_transport tcp -i \"rtsp://" + ipcAccount + ":" + ipcPassword + "@" + ip + "/Streaming/Channels/" + channelStream + "?transportmode=unicast\" -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
+                String result = manager.start(channelName, "ffmpeg   -rtsp_transport tcp -i \"rtsp://"
+                        + ipcAccount
+                        + ":"
+                        + ipcPassword
+                        + "@"
+                        + ip
+                        + "/Streaming/Channels/"
+                        + channelStream +
+                        "?transportmode=unicast\" -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\""
+                        + channelName);
+
                 log.info("result" + result);
             } catch (Exception e) {
                 log.info("windows:" + e.getMessage());
@@ -214,11 +218,12 @@ public class web {
         } else {
             log.info(channelName + "任务已存在，从任务列表中取出数据返回");
         }
+
         // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
         liveUrl = "rtmp://" + currentserver + ":1935/live/" + channelName;
+
         // 下面这个是http-flv版的流
         // liveUrl= "/live?port=1935&app=myapp&stream="+channelName;
-
         return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
     }
 
@@ -728,20 +733,20 @@ public class web {
 
         if (!bRet) {
             //设备不支持,则表示没有IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.bySingleDTalkChanNums; iChannum++) {
-                channelList.add("Camera" + (iChannum + m_strDeviceInfo.bySingleDTalkChanNums));
+            for (int iChannum = 0; iChannum < m_strDeviceInfo.struDeviceV30.byChanNum; iChannum++) {
+                channelList.add("Camera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
             }
         } else {
             //设备支持IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.bySingleDTalkChanNums; iChannum++) {
+            for (int iChannum = 0; iChannum < m_strDeviceInfo.struDeviceV30.byChanNum; iChannum++) {
                 if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
-                    channelList.add("Camera" + (iChannum + m_strDeviceInfo.bySingleDTalkChanNums));
+                    channelList.add("Camera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
                 }
             }
             for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
                 if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
                     System.out.println(new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
-                    channelList.add("IPCamera" + (iChannum + m_strDeviceInfo.bySingleDTalkChanNums));
+                    channelList.add("IPCamera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
 
                 }
         }
