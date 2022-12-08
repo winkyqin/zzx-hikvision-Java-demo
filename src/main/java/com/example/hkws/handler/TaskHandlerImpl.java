@@ -34,8 +34,9 @@ public class TaskHandlerImpl implements TaskHandler {
         try {
             tasker = ExecUtil.createTasker(id, command, ohm);
 
-            if (CommandManager.config.isDebug())
+            if (CommandManager.config.isDebug()) {
                 log.info(id + " 执行命令行：" + command);
+            }
             System.out.println(id + " 执行命令行：" + command);
 
             return tasker;

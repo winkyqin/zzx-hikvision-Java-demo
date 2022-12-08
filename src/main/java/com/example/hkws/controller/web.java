@@ -45,14 +45,12 @@ public class web {
     @Value("${ipc.password}")
     private String ipcPassword;
 
-    @Value("${nvr.account}")
-    private String nvrAccount;
-
-    @Value("${nvr.password}")
-    private String nvrPassword;
-
-    @Value("${nvr.ip}")
-    private String nvrIp;
+//    @Value("${nvr.account}")
+//    private String nvrAccount;
+//    @Value("${nvr.password}")
+//    private String nvrPassword;
+//    @Value("${nvr.ip}")
+//    private String nvrIp;
 
     @Value("${currentserver}")
     private String currentserver;
@@ -92,10 +90,12 @@ public class web {
         System.out.println("hCNetSDK:" + hCNetSDK);
         boolean initSuc = hCNetSDK.NET_DVR_Init();
         System.out.println("initSuc:" + initSuc);
+
         //初始化判断
         if (!initSuc) {
             return ResultDTO.of(ResultEnum.ERROR).setData("初始化失败");
         }
+
         //设置异常消息回调
         FExceptionCallBack_Imp fExceptionCallBack = null;
         if (fExceptionCallBack == null) {
@@ -142,22 +142,27 @@ public class web {
         HttpSession session = request.getSession();
         session.setAttribute("m_sDeviceIP", m_sDeviceIP);
         session.setAttribute("lUserID", lUserID);
+
         List<String> channelList = CreateDeviceChannel(lUserID, m_strDeviceInfo);
         System.out.println("channelList" + channelList);
 
         return ResultDTO.of(ResultEnum.SUCCESS).setData(channelList);
     }
 
-    //    @PostMapping("/getLiveStream")
-    //    @ApiOperation(value="window,获取实时视频流",notes = "channelStream:101 代表通道一 主码流。102代表通道一 子码流；子码流比主码流小，但画质会有所下降 ，channelName是通道名，能保证唯一即可")
+    @PostMapping("/getLiveStream")
+    @ApiOperation(value = "window,获取实时视频流", notes = "channelStream:101 代表通道一 主码流。102代表通道一 子码流；子码流比主码流小，但画质会有所下降 ，channelName是通道名，能保证唯一即可")
     public ResultDTO live(@RequestBody LiveDTO liveDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
         HttpSession session = request.getSession();
-        NativeLong lUserID = (NativeLong) session.getAttribute("lUserID");
-
-        if (lUserID.intValue() == -1) {
+        Object obj_user_id = session.getAttribute("lUserID");
+        System.out.println(obj_user_id);
+        if (obj_user_id == null) {
             return ResultDTO.of(ResultEnum.REQUIRE_LOGIN);
         }
 
+        int lUserID = (int) obj_user_id;
+        if (lUserID == -1) {
+            return ResultDTO.of(ResultEnum.REQUIRE_LOGIN);
+        }
         String liveUrl = "";
         String channelName = liveDTO.getChannelName();
 
@@ -174,6 +179,7 @@ public class web {
                             + "?transportmode=unicast\" -f flv -vcodec copy -acodec copy -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\""
                             + channelName);
         }
+
         // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
         liveUrl = "rtmp://localhost:1935/live/" + channelName;
         System.out.println(liveUrl);
@@ -221,48 +227,47 @@ public class web {
 
         // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
         liveUrl = "rtmp://" + currentserver + ":1935/live/" + channelName;
-
         // 下面这个是http-flv版的流
         // liveUrl= "/live?port=1935&app=myapp&stream="+channelName;
         return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
     }
 
-    @PostMapping("/getHistoryStream")
-    @ApiOperation(value = "windows 获取历史视频流", notes = "channelStream:101 通道一 码流一，channelName是通道名，能保证唯一即可,跟前端约定就以 history为前缀，避免跟上面的channelName冲突了")
-    public ResultDTO history(@RequestBody HistoryDTO historyDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
-        String liveUrl = "";
-        String channelName = historyDTO.getChannelName();
-        String ip = historyDTO.getIp();
-
-        String channelStream = winGetChannelNumByIp(ip) + "01";
-        String starttime = historyDTO.getStarttime();
-        String endtime = historyDTO.getEndtime();
-
-        // 通过id查询这个任务
-        CommandTasker info = manager.query(channelName);
-        // 如果任务没存在，开启视频流
-        if (Objects.isNull(info)) {
-            //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
-            try {
-                String result = manager.start(channelName,
-                        "ffmpeg -re  -rtsp_transport tcp -i " +
-                                "\"rtsp://" + nvrAccount + ":" + nvrPassword + "@" + nvrIp + "/Streaming/tracks/" + channelStream + "?starttime=" + starttime + "&endtime=" + endtime + "\" " +
-                                " -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
-                log.info("result" + result);
-            } catch (Exception e) {
-                log.info("windows history:" + e.getMessage());
-                throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
-            }
-        } else {
-            log.info(channelName + "任务已存在，从任务列表中取出数据返回");
-        }
-
-        // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
-        liveUrl = "rtmp://" + currentserver + ":1935/live/" + channelName;
-        // 下面这个是http-flv版的流
-        // liveUrl= "/live?port=1935&app=myapp&stream="+channelName;
-        return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
-    }
+//    @PostMapping("/getHistoryStream")
+//    @ApiOperation(value = "windows 获取历史视频流", notes = "channelStream:101 通道一 码流一，channelName是通道名，能保证唯一即可,跟前端约定就以 history为前缀，避免跟上面的channelName冲突了")
+//    public ResultDTO history(@RequestBody HistoryDTO historyDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
+//        String liveUrl = "";
+//        String channelName = historyDTO.getChannelName();
+//        String ip = historyDTO.getIp();
+//
+//        String channelStream = winGetChannelNumByIp(ip) + "01";
+//        String starttime = historyDTO.getStarttime();
+//        String endtime = historyDTO.getEndtime();
+//
+//        // 通过id查询这个任务
+//        CommandTasker info = manager.query(channelName);
+//        // 如果任务没存在，开启视频流
+//        if (Objects.isNull(info)) {
+//            //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
+//            try {
+//                String result = manager.start(channelName,
+//                        "ffmpeg -re  -rtsp_transport tcp -i " +
+//                                "\"rtsp://" + nvrAccount + ":" + nvrPassword + "@" + nvrIp + "/Streaming/tracks/" + channelStream + "?starttime=" + starttime + "&endtime=" + endtime + "\" " +
+//                                " -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
+//                log.info("result" + result);
+//            } catch (Exception e) {
+//                log.info("windows history:" + e.getMessage());
+//                throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
+//            }
+//        } else {
+//            log.info(channelName + "任务已存在，从任务列表中取出数据返回");
+//        }
+//
+//        // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
+//        liveUrl = "rtmp://" + currentserver + ":1935/live/" + channelName;
+//        // 下面这个是http-flv版的流
+//        // liveUrl= "/live?port=1935&app=myapp&stream="+channelName;
+//        return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
+//    }
 
     @PostMapping("/closeLiveStream")
     @ApiOperation(value = "windows 关闭视频流")
@@ -297,14 +302,23 @@ public class web {
         String liveUrl = "";
         String channelName = liveDTO.getChannelName();
         String ip = liveDTO.getIp();
-
         // 通过id查询这个任务
         CommandTasker info = manager.query(channelName);
         // 如果任务没存在，开启视频流
         if (Objects.isNull(info)) {
             try {
                 //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
-                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i rtsp://" + ipcAccount + ":" + ipcPassword + "@" + ip + "/Streaming/Channels/" + liveDTO.getChannelStream() + "?transportmode=unicast -f flv  -b:v 1000K -vcodec h264  -acodec aac  -s 1480*500  -crf 15 rtmp://localhost:1935/live/" + channelName);
+                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i rtsp://"
+                        + ipcAccount
+                        + ":"
+                        + ipcPassword
+                        + "@"
+                        + ip
+                        + "/Streaming/Channels/"
+                        + liveDTO.getChannelStream()
+                        + "?transportmode=unicast -f flv  -b:v 1000K -vcodec h264  -acodec aac  -s 1480*500  -crf 15 rtmp://localhost:1935/live/"
+                        + channelName);
+
             } catch (Exception e) {
                 log.info("linux:" + e.getMessage());
                 throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
@@ -317,39 +331,51 @@ public class web {
         return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
     }
 
-    @PostMapping("/linux/getHistoryStream")
-    @ApiOperation(value = "linux，获取历史视频流", notes = "channelStream:101 通道一 码流一，channelName是通道名，能保证唯一即可,跟前端约定就以 history为前缀，避免跟上面的channelName冲突了")
-    public ResultDTO linuxHistory(@RequestBody HistoryDTO historyDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
-        String liveUrl = "";
-        String channelName = historyDTO.getChannelName();
-        String starttime = historyDTO.getStarttime();
-        String endtime = historyDTO.getEndtime();
-        String ip = historyDTO.getIp();
-        String channelStrem = linuxGetChannelNumByIp(ip) + "01";
-
-        //通过id查询这个任务
-        CommandTasker info = manager.query(channelName);
-        //如果任务没存在，开启视频流
-        if (Objects.isNull(info)) {
-            try {
-                //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
-                //172.32.251.66 只能从nvr设备上去取历史rtsp流
-                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i rtsp://" + nvrAccount + ":" + nvrPassword + "@" + nvrIp + "/Streaming/tracks/" + channelStrem + "?transportmode=unicast&startime=" + starttime + "&endtime=" + endtime +
-                        "-f flv -b:v 1000K  -vcodec h264  -acodec aac  -s 1480*500   -crf 15 \"rtmp://localhost:1935/live/" + channelName);
-            } catch (Exception e) {
-                log.info("linux history:" + e.getMessage());
-                throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
-            }
-        }
-
-        // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
-        // liveUrl = "rtmp://localhost:1935/live/"+channelName;
-        log.info("/linux/getHistoryStream");
-        // 下面这个是http-flv版的流，前端显示时加上ip地址即可
-
-        liveUrl = "http://" + currentserver + ":" + videoStreamPort + "/live?port=1935&app=live&stream=" + channelName;
-        return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
-    }
+//    @PostMapping("/linux/getHistoryStream")
+//    @ApiOperation(value = "linux，获取历史视频流", notes = "channelStream:101 通道一 码流一，channelName是通道名，能保证唯一即可,跟前端约定就以 history为前缀，避免跟上面的channelName冲突了")
+//    public ResultDTO linuxHistory(@RequestBody HistoryDTO historyDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
+//        String liveUrl = "";
+//        String channelName = historyDTO.getChannelName();
+//        String starttime = historyDTO.getStarttime();
+//        String endtime = historyDTO.getEndtime();
+//        String ip = historyDTO.getIp();
+//        String channelStrem = linuxGetChannelNumByIp(ip) + "01";
+//
+//        //通过id查询这个任务
+//        CommandTasker info = manager.query(channelName);
+//        //如果任务没存在，开启视频流
+//        if (Objects.isNull(info)) {
+//            try {
+//                //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
+//                //172.32.251.66 只能从nvr设备上去取历史rtsp流
+//                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i rtsp://"
+//                        + nvrAccount
+//                        + ":"
+//                        + nvrPassword
+//                        + "@"
+//                        + nvrIp
+//                        + "/Streaming/tracks/"
+//                        + channelStrem
+//                        + "?transportmode=unicast&startime="
+//                        + starttime
+//                        + "&endtime="
+//                        + endtime
+//                        + "-f flv -b:v 1000K  -vcodec h264  -acodec aac  -s 1480*500   -crf 15 \"rtmp://localhost:1935/live/"
+//                        + channelName);
+//            } catch (Exception e) {
+//                log.info("linux history:" + e.getMessage());
+//                throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
+//            }
+//        }
+//
+//        // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
+//        // liveUrl = "rtmp://localhost:1935/live/"+channelName;
+//        log.info("/linux/getHistoryStream");
+//        // 下面这个是http-flv版的流，前端显示时加上ip地址即可
+//
+//        liveUrl = "http://" + currentserver + ":" + videoStreamPort + "/live?port=1935&app=live&stream=" + channelName;
+//        return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
+//    }
 
     @PostMapping("/linux/closeLiveStream")
     @ApiOperation(value = "linux，关闭视频流")
@@ -450,7 +476,7 @@ public class web {
         return ResultDTO.of(ResultEnum.ERROR);
     }
 
-    //    @RequestMapping(value = "/videoPlay", method = RequestMethod.GET)
+    @RequestMapping(value = "/videoPlay", method = RequestMethod.GET)
     public void videoPlay(HttpServletRequest request, HttpServletResponse response, @RequestParam String url) {
 //        String path = request.getServletContext().getRealPath(url);
         String path = fileUploadPath + url;
@@ -588,6 +614,68 @@ public class web {
         return ResultDTO.of(ResultEnum.SUCCESS);
     }
 
+//    /**
+//     * @Description: 返回通道数，要根据这个通道数组装成 102,101这种通道流去找nvr要数据
+//     * @Param:
+//     * @Author: zzx 774286887@qq.com
+//     * @Date: 2020/5/28
+//     * @Time: 17:06
+//     * @return:
+//     */
+//    public String winGetChannelNumByIp(String ip) throws GlobalException {
+//        String channelNum = "";
+//        boolean initSuc = hCNetSDK.NET_DVR_Init();
+//        if (!initSuc) {
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机初始化失败");
+//        }
+//        String m_sDeviceIP = nvrIp;//设备ip地址
+//        HCNetSDK.NET_DVR_DEVICEINFO_V30 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
+//        int lUserID = hCNetSDK.NET_DVR_Login_V30(m_sDeviceIP, (short) 8000, nvrAccount, nvrPassword, m_strDeviceInfo);
+//        //long userID = lUserID.longValue();
+//        if (lUserID == -1) {
+//            m_sDeviceIP = "";//登录未成功,IP置为空
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机登录失败");
+//        }
+//        IntByReference ibrBytesReturned = new IntByReference(0);//获取IP接入配置参数
+//        boolean bRet = false;
+//
+//        HCNetSDK.NET_DVR_IPPARACFG m_strIpparaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
+//        m_strIpparaCfg.write();
+//        Pointer lpIpParaConfig = m_strIpparaCfg.getPointer();
+//        bRet = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_IPPARACFG, 0, lpIpParaConfig, m_strIpparaCfg.size(), ibrBytesReturned);
+//        m_strIpparaCfg.read();
+//
+//        if (!bRet) {
+//            //设备不支持,则表示没有IP通道
+//            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
+//
+//            }
+//        } else {
+//            //设备支持IP通道
+//            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
+//                if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
+//
+//                }
+//            }
+//            for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
+//                if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
+//                    String channelIp = (new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
+//                    channelIp = channelIp.trim();
+//                    log.info("channelIp:" + channelIp.length());
+//                    log.info("ip:" + ip.length());
+//                    log.info(String.valueOf(channelIp.equals(ip)));
+//                    if (channelIp.equals(ip)) {
+//                        channelNum = (String.valueOf(iChannum + 1));
+//                    }
+//
+//                }
+//        }
+//        if (Objects.isNull(channelNum)) {
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "获取通道号失败，历史回放不成功");
+//        }
+//        return channelNum;
+//    }
+
     /**
      * @Description: 返回通道数，要根据这个通道数组装成 102,101这种通道流去找nvr要数据
      * @Param:
@@ -596,124 +684,61 @@ public class web {
      * @Time: 17:06
      * @return:
      */
-    public String winGetChannelNumByIp(String ip) throws GlobalException {
-        String channelNum = "";
-        boolean initSuc = hCNetSDK.NET_DVR_Init();
-        if (!initSuc) {
-            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机初始化失败");
-        }
-        String m_sDeviceIP = nvrIp;//设备ip地址
-        HCNetSDK.NET_DVR_DEVICEINFO_V30 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
-        int lUserID = hCNetSDK.NET_DVR_Login_V30(m_sDeviceIP, (short) 8000, nvrAccount, nvrPassword, m_strDeviceInfo);
-        //long userID = lUserID.longValue();
-        if (lUserID == -1) {
-            m_sDeviceIP = "";//登录未成功,IP置为空
-            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机登录失败");
-        }
-        IntByReference ibrBytesReturned = new IntByReference(0);//获取IP接入配置参数
-        boolean bRet = false;
-
-        HCNetSDK.NET_DVR_IPPARACFG m_strIpparaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
-        m_strIpparaCfg.write();
-        Pointer lpIpParaConfig = m_strIpparaCfg.getPointer();
-        bRet = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_IPPARACFG, 0, lpIpParaConfig, m_strIpparaCfg.size(), ibrBytesReturned);
-        m_strIpparaCfg.read();
-
-        if (!bRet) {
-            //设备不支持,则表示没有IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
-
-            }
-        } else {
-            //设备支持IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
-                if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
-
-                }
-            }
-            for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
-                if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
-                    String channelIp = (new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
-                    channelIp = channelIp.trim();
-                    log.info("channelIp:" + channelIp.length());
-                    log.info("ip:" + ip.length());
-                    log.info(String.valueOf(channelIp.equals(ip)));
-                    if (channelIp.equals(ip)) {
-                        channelNum = (String.valueOf(iChannum + 1));
-                    }
-
-                }
-        }
-        if (Objects.isNull(channelNum)) {
-            throw new GlobalException(ErrorCodeConsts.ERROR, "获取通道号失败，历史回放不成功");
-        }
-        return channelNum;
-    }
-
-    /**
-     * @Description: 返回通道数，要根据这个通道数组装成 102,101这种通道流去找nvr要数据
-     * @Param:
-     * @Author: zzx 774286887@qq.com
-     * @Date: 2020/5/28
-     * @Time: 17:06
-     * @return:
-     */
-    public String linuxGetChannelNumByIp(String ip) throws GlobalException {
-        String channelNum = "";
-        boolean initSuc = hCNetSDK.NET_DVR_Init();
-        if (initSuc != true) {
-            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机初始化失败");
-        }
-        String m_sDeviceIP = nvrIp;//设备ip地址
-        HCNetSDK.NET_DVR_DEVICEINFO_V30 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
-        int lUserID = hCNetSDK.NET_DVR_Login_V30(m_sDeviceIP,
-                (short) 8000, nvrAccount, nvrPassword, m_strDeviceInfo);
-
-        //long userID = lUserID.longValue();
-        if (lUserID == -1) {
-            m_sDeviceIP = "";//登录未成功,IP置为空
-            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机登录失败");
-        }
-        IntByReference ibrBytesReturned = new IntByReference(0);//获取IP接入配置参数
-        boolean bRet = false;
-
-        HCNetSDK.NET_DVR_IPPARACFG m_strIpparaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
-        m_strIpparaCfg.write();
-        Pointer lpIpParaConfig = m_strIpparaCfg.getPointer();
-        bRet = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_IPPARACFG, 0, lpIpParaConfig, m_strIpparaCfg.size(), ibrBytesReturned);
-        m_strIpparaCfg.read();
-
-        if (!bRet) {
-            //设备不支持,则表示没有IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
-
-
-            }
-        } else {
-            //设备支持IP通道
-            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
-                if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
-                    //TODO
-                }
-            }
-            for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
-                if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
-                    String channelIp = (new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
-                    channelIp = channelIp.trim();
-                    log.info("channelIp:" + channelIp.length());
-                    log.info("ip:" + ip.length());
-                    log.info(String.valueOf(channelIp.equals(ip)));
-                    if (channelIp.equals(ip)) {
-                        channelNum = (String.valueOf(iChannum + 1));
-                    }
-
-                }
-        }
-        if (Objects.isNull(channelNum)) {
-            throw new GlobalException(ErrorCodeConsts.ERROR, "获取通道号失败，历史回放不成功");
-        }
-        return channelNum;
-    }
+//    public String linuxGetChannelNumByIp(String ip) throws GlobalException {
+//        String channelNum = "";
+//        boolean initSuc = hCNetSDK.NET_DVR_Init();
+//        if (initSuc != true) {
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机初始化失败");
+//        }
+//
+//        String m_sDeviceIP = nvrIp;//设备ip地址
+//        HCNetSDK.NET_DVR_DEVICEINFO_V30 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
+//        int lUserID = hCNetSDK.NET_DVR_Login_V30(m_sDeviceIP,
+//                (short) 8000, nvrAccount, nvrPassword, m_strDeviceInfo);
+//
+//        //long userID = lUserID.longValue();
+//        if (lUserID == -1) {
+//            m_sDeviceIP = "";//登录未成功,IP置为空
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "刻录机登录失败");
+//        }
+//        IntByReference ibrBytesReturned = new IntByReference(0);//获取IP接入配置参数
+//        boolean bRet = false;
+//
+//        HCNetSDK.NET_DVR_IPPARACFG m_strIpparaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
+//        m_strIpparaCfg.write();
+//        Pointer lpIpParaConfig = m_strIpparaCfg.getPointer();
+//        bRet = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_IPPARACFG, 0, lpIpParaConfig, m_strIpparaCfg.size(), ibrBytesReturned);
+//        m_strIpparaCfg.read();
+//
+//        if (!bRet) {
+//            //设备不支持,则表示没有IP通道
+//            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
+//            }
+//        } else {
+//            //设备支持IP通道
+//            for (int iChannum = 0; iChannum < m_strDeviceInfo.byChanNum; iChannum++) {
+//                if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
+//                    //TODO
+//                }
+//            }
+//            for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
+//                if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
+//                    String channelIp = (new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
+//                    channelIp = channelIp.trim();
+//                    log.info("channelIp:" + channelIp.length());
+//                    log.info("ip:" + ip.length());
+//                    log.info(String.valueOf(channelIp.equals(ip)));
+//                    if (channelIp.equals(ip)) {
+//                        channelNum = (String.valueOf(iChannum + 1));
+//                    }
+//
+//                }
+//        }
+//        if (Objects.isNull(channelNum)) {
+//            throw new GlobalException(ErrorCodeConsts.ERROR, "获取通道号失败，历史回放不成功");
+//        }
+//        return channelNum;
+//    }
 
 
     /*************************************************
@@ -775,6 +800,5 @@ public class web {
         }
         return iChannelNum;
     }
-
 
 }

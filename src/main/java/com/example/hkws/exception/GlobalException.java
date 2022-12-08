@@ -41,6 +41,7 @@ public class GlobalException extends Exception {
             for (Map.Entry<String, Object> entry : errorMaps.entrySet()) {
                 msg1.append((String) entry.getValue()).append(",");
             }
+
             if (msg1.length() > 0) {
                 msg = msg1.substring(0, msg1.length() - 1);
             } else {

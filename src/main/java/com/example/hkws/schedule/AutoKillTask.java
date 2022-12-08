@@ -37,8 +37,7 @@ public class AutoKillTask {
      */
     @Scheduled(initialDelay = 1000 * 1, fixedRate = 1000 * 10)
     public void autoKillTask() {
-        Collection<CommandTasker> commandTaskers =
-                web.manager.queryAll();
+        Collection<CommandTasker> commandTaskers = web.manager.queryAll();
         log.info("定时执行删除task任务");
         System.out.println(commandTaskers);
 
@@ -49,7 +48,6 @@ public class AutoKillTask {
             String ip = id.replace("history", "");
             try {
                 restTemplate.getForObject("http://" + ip, String.class);
-
             } catch (Exception e) {
                 web.manager.stop(ip);
                 log.info(ip + "摄像头访问异常，请检查");
