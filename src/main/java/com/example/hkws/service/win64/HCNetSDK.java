@@ -12,8 +12,8 @@ import java.util.List;
 
 //SDK接口说明,HCNetSDK.dll
 public interface HCNetSDK extends Library {
-
-    HCNetSDK INSTANCE = (HCNetSDK) Native.loadLibrary("HCNetSDK", HCNetSDK.class);
+    //使用绝对路径读取HCNETSDK
+    HCNetSDK INSTANCE = (HCNetSDK) Native.loadLibrary("E:\\BaiduSyncdisk\\WinkyCambri\\WinkyGitee\\zzx-hikvision-Java-demo\\lib\\HCNetSDK.dll", HCNetSDK.class);
      /*** 宏定义 ***/
     //常量
 

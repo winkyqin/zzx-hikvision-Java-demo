@@ -37,7 +37,8 @@ public class AutoKillTask {
      */
     @Scheduled(initialDelay = 1000 * 1, fixedRate = 1000 * 10)
     public void autoKillTask() {
-        Collection<CommandTasker> commandTaskers = web.manager.queryAll();
+        Collection<CommandTasker> commandTaskers =
+                web.manager.queryAll();
         log.info("定时执行删除task任务");
         System.out.println(commandTaskers);
 
