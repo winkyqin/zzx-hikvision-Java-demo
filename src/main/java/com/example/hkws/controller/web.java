@@ -33,6 +33,8 @@ import java.util.Objects;
 @Api(description = "海康摄像头模块")
 @Slf4j
 public class web {
+    private static final String TAG = web.class.getName();
+
     // 如果要打包到linux 记得把HCNetSDK 也要换成 linux版的
     static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;//null??? 为什么有null;//HCNetSDK.INSTANCE;
 
@@ -65,8 +67,8 @@ public class web {
     public static CommandManager manager = new CommandManagerImpl(5);
     /*windows*/
     //private String winAccountInfo = "admin:linghong2019@192.168.123.200";
+    private String winAccountInfo = "admin:kpr123456@192.100.1.97";
 
-    private String winAccountInfo = "admin:kpr123456@http://192.100.1.97/";
     //linux
     //private String linuxAccountInfo = "admin:asdf1234@";
     boolean bRealPlay;//是否在预览.
@@ -79,17 +81,17 @@ public class web {
 
     static class FExceptionCallBack_Imp implements HCNetSDK.FExceptionCallBack {
         public void invoke(int dwType, int lUserID, int lHandle, Pointer pUser) {
-            System.out.println("异常事件类型:" + dwType);
+            log.info("异常事件类型:" + dwType);
         }
     }
 
     @PostMapping("/login")
     public ResultDTO login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) throws GlobalException {
         int lUserID = 0;//用户句柄
-        System.out.println("login:" + loginDTO.toString());
-        System.out.println("hCNetSDK:" + hCNetSDK);
+        log.info("login:" + loginDTO.toString());
+
         boolean initSuc = hCNetSDK.NET_DVR_Init();
-        System.out.println("initSuc:" + initSuc);
+        log.info("initSuc:" + initSuc);
 
         //初始化判断
         if (!initSuc) {
@@ -105,18 +107,16 @@ public class web {
         if (!hCNetSDK.NET_DVR_SetExceptionCallBack_V30(0, 0, fExceptionCallBack, pUser)) {
             return null;
         }
-        System.out.println("设置异常消息回调成功");
+
+        log.info("设置异常消息回调成功");
 
         //启动SDK写日志
         hCNetSDK.NET_DVR_SetLogToFile(3, "..\\sdkLog\\", false);
-
         //登录设备，每一台设备分别登录; 登录句柄是唯一的，可以区分设备
         HCNetSDK.NET_DVR_USER_LOGIN_INFO m_strLoginInfo = new HCNetSDK.NET_DVR_USER_LOGIN_INFO();//设备登录信息
         HCNetSDK.NET_DVR_DEVICEINFO_V40 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V40();//设备信息
 
-        //String m_sDeviceIP = "10.17.34.28";//设备ip地址
         String m_sDeviceIP = "192.100.1.97";//设备ip地址
-
         m_strLoginInfo.sDeviceAddress = new byte[HCNetSDK.NET_DVR_DEV_ADDRESS_MAX_LEN];
         System.arraycopy(m_sDeviceIP.getBytes(), 0, m_strLoginInfo.sDeviceAddress, 0, m_sDeviceIP.length());
 
@@ -124,7 +124,6 @@ public class web {
         m_strLoginInfo.sUserName = new byte[HCNetSDK.NET_DVR_LOGIN_USERNAME_MAX_LEN];
         System.arraycopy(m_sUsername.getBytes(), 0, m_strLoginInfo.sUserName, 0, m_sUsername.length());
 
-        //String m_sPassword = "abcd1234";//设备密码
         String m_sPassword = "kpr123456";//设备密码
         m_strLoginInfo.sPassword = new byte[HCNetSDK.NET_DVR_LOGIN_PASSWD_MAX_LEN];
         System.arraycopy(m_sPassword.getBytes(), 0, m_strLoginInfo.sPassword, 0, m_sPassword.length());
@@ -144,7 +143,7 @@ public class web {
         session.setAttribute("lUserID", lUserID);
 
         List<String> channelList = CreateDeviceChannel(lUserID, m_strDeviceInfo);
-        System.out.println("channelList" + channelList);
+        log.info("channelList" + channelList);
 
         return ResultDTO.of(ResultEnum.SUCCESS).setData(channelList);
     }
@@ -154,7 +153,7 @@ public class web {
     public ResultDTO live(@RequestBody LiveDTO liveDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
         HttpSession session = request.getSession();
         Object obj_user_id = session.getAttribute("lUserID");
-        System.out.println(obj_user_id);
+        log.info("obj_user_id is not null:" + (obj_user_id == null));
 
         if (obj_user_id == null) {
             return ResultDTO.of(ResultEnum.REQUIRE_LOGIN);
@@ -164,26 +163,25 @@ public class web {
         if (lUserID == -1) {
             return ResultDTO.of(ResultEnum.REQUIRE_LOGIN);
         }
+
         String liveUrl = "";
         String channelName = liveDTO.getChannelName();
+        String ip = liveDTO.getIp();
 
         //通过id查询这个任务
         CommandTasker info = manager.query(channelName);
+        log.info(channelName);
+        log.info(info.toString());
 
         //如果任务没存在，开启视频流
         if (Objects.isNull(info)) {
             //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
-            manager.start(channelName,
-                    "ffmpeg -re  -rtsp_transport tcp -i \"rtsp://"
-                            + winAccountInfo + "/Streaming/Channels/"
-                            + liveDTO.getChannelStream()
-                            + "?transportmode=unicast\" -f flv -vcodec copy -acodec copy -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\""
-                            + channelName);
+            manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i \"rtsp://" + winAccountInfo + "/Streaming/Channels/" + liveDTO.getChannelStream() + "?transportmode=unicast\" -f flv -vcodec h264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1480*500  -max_muxing_queue_size 1024 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
         }
 
         // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
         liveUrl = "rtmp://localhost:1935/live/" + channelName;
-        System.out.println(liveUrl);
+        log.info(liveUrl);
 
         // 下面这个是http-flv版的流
         // liveUrl= "/live?port=1935&app=myapp&stream="+channelName;
@@ -201,22 +199,11 @@ public class web {
 
         //通过id查询这个任务
         CommandTasker info = manager.query(channelName);
-
         //如果任务没存在，开启视频流
         if (Objects.isNull(info)) {
             //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
             try {
-                String result = manager.start(channelName, "ffmpeg   -rtsp_transport tcp -i \"rtsp://"
-                        + ipcAccount
-                        + ":"
-                        + ipcPassword
-                        + "@"
-                        + ip
-                        + "/Streaming/Channels/"
-                        + channelStream +
-                        "?transportmode=unicast\" -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\""
-                        + channelName);
-
+                String result = manager.start(channelName, "ffmpeg   -rtsp_transport tcp -i \"rtsp://" + ipcAccount + ":" + ipcPassword + "@" + ip + "/Streaming/Channels/" + channelStream + "?transportmode=unicast\" -f flv -vcodec h264 -acodec aac -ar 44100  -s 1480*500 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
                 log.info("result" + result);
             } catch (Exception e) {
                 log.info("windows:" + e.getMessage());
@@ -283,7 +270,7 @@ public class web {
                 CommandTasker info = manager.query(channelName);
                 //       如果任务存在
                 if (!Objects.isNull(info)) {
-//                    System.out.println(info);
+//                    log.info(info);
                     try {
                         manager.stop(channelName);
                     } catch (Exception e) {
@@ -299,27 +286,17 @@ public class web {
     @PostMapping("/linux/getLiveStreamByIp")
     @ApiOperation(value = "linux，获取实时视频流", notes = "channelStream:101 代表通道一 主码流。102代表通道一 子码流；子码流比主码流小，但画质会有所下降 ，channelName是通道名，能保证唯一即可")
     public ResultDTO linuxGetLiveStreamByIp(@RequestBody LiveDTO liveDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
-
         String liveUrl = "";
         String channelName = liveDTO.getChannelName();
         String ip = liveDTO.getIp();
+
         // 通过id查询这个任务
         CommandTasker info = manager.query(channelName);
         // 如果任务没存在，开启视频流
         if (Objects.isNull(info)) {
             try {
                 //执行原生ffmpeg命令（不包含ffmpeg的执行路径，该路径会从配置文件中自动读取）
-                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i rtsp://"
-                        + ipcAccount
-                        + ":"
-                        + ipcPassword
-                        + "@"
-                        + ip
-                        + "/Streaming/Channels/"
-                        + liveDTO.getChannelStream()
-                        + "?transportmode=unicast -f flv  -b:v 1000K -vcodec h264  -acodec aac  -s 1480*500  -crf 15 rtmp://localhost:1935/live/"
-                        + channelName);
-
+                manager.start(channelName, "ffmpeg -re  -rtsp_transport tcp -i \"rtsp://" + winAccountInfo + "/Streaming/Channels/" + liveDTO.getChannelStream() + "?transportmode=unicast\" -f flv -vcodec h264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1480*500  -max_muxing_queue_size 1024 -crf 15 \"rtmp://localhost:1935/live/\"" + channelName);
             } catch (Exception e) {
                 log.info("linux:" + e.getMessage());
                 throw new GlobalException(ErrorCodeConsts.ERROR, e.getMessage());
@@ -432,12 +409,12 @@ public class web {
             struStopTime.dwSecond = playBackConDTO.getEndSecond();
 
             int m_iChanShowNum = getChannelNumber(playBackConDTO.getChannelName());// 通道（摄像头IP地址）
-            System.out.println(playBackConDTO.toString());
-            System.out.println("lUserID:" + lUserID);
-            System.out.println("m_iChanShowNum:" + m_iChanShowNum);
+            log.info(playBackConDTO.toString());
+            log.info("lUserID:" + lUserID);
+            log.info("m_iChanShowNum:" + m_iChanShowNum);
             String fileName = sDeviceIP + "/" + m_iChanShowNum + "/" + struStartTime.toStringTitle() + ".mp4";
             String sFileName = fileUploadPath + fileName;
-            System.out.println(sFileName);
+            log.info(sFileName);
 
             // 视频下载调用 下载的文件是mpeg-ps 非标准的mpeg-4
             m_lLoadHandle = hCNetSDK.NET_DVR_GetFileByTime(lUserID, m_iChanShowNum, struStartTime,
@@ -452,25 +429,25 @@ public class web {
                     if (nPos.getValue() == 100) {
                         hCNetSDK.NET_DVR_StopGetFile(m_lLoadHandle);
                         m_lLoadHandle = -1;
-                        System.out.println("按时间下载结束!");
+                        log.info("按时间下载结束!");
                         Integer error = hCNetSDK.NET_DVR_GetLastError();
-                        System.out.println("last error " + error);
+                        log.info("last error " + error);
                     }
 
                     if (nPos.getValue() > 100) {
                         Integer error = hCNetSDK.NET_DVR_GetLastError();
-                        System.out.println("下载失败");// 按时间
-                        System.out.println("last error " + error);
+                        log.info("下载失败");// 按时间
+                        log.info("last error " + error);
                         return ResultDTO.of(ResultEnum.ERROR).setData(error);
                     }
                     Thread.sleep(500);
                 }
                 return ResultDTO.of(ResultEnum.SUCCESS).setData(sFileName);
-                // System.out.println("视频下载成功！");
+                // log.info("视频下载成功！");
             } else {
                 Integer error = hCNetSDK.NET_DVR_GetLastError();
-                System.out.println("下载失败");// 按时间
-                System.out.println("last error " + error);
+                log.info("下载失败");// 按时间
+                log.info("last error " + error);
                 return ResultDTO.of(ResultEnum.ERROR).setData(error);
             }
         }
@@ -482,8 +459,8 @@ public class web {
 //        String path = request.getServletContext().getRealPath(url);
         String path = fileUploadPath + url;
         BufferedInputStream bis = null;
-        System.out.println("url" + url);
-        System.out.println("path" + path);
+        log.info("url" + url);
+        log.info("path" + path);
 
         try {
             File file = new File(path);
@@ -594,22 +571,22 @@ public class web {
         HKPlayContorlEnum controlEnum = HKPlayContorlEnum.valueOf(playControlDTO.getCommand());
         Boolean playHandle = false;
 
-        System.out.println("controlEnum.getCode():" + controlEnum.getCode());
-        System.out.println("playControlDTO:" + playControlDTO.toString());
+        log.info("controlEnum.getCode():" + controlEnum.getCode());
+        log.info("playControlDTO:" + playControlDTO.toString());
         //        开始控制
         playHandle = hCNetSDK.NET_DVR_PTZControl_Other(lUserID, iCannleNum, controlEnum.getCode(), 0);
         if (playHandle == false) {
             Integer error = hCNetSDK.NET_DVR_GetLastError();
-            System.out.println("控制失败");// 按时间
-            System.out.println("last error " + error);
+            log.info("控制失败");// 按时间
+            log.info("last error " + error);
             return ResultDTO.of(ResultEnum.ERROR).setData(error);
         }
         //        停止控制
         playHandle = hCNetSDK.NET_DVR_PTZControl_Other(lUserID, iCannleNum, controlEnum.getCode(), 1);
         if (playHandle == false) {
             Integer error = hCNetSDK.NET_DVR_GetLastError();
-            System.out.println("控制失败");// 按时间
-            System.out.println("last error " + error);
+            log.info("控制失败");// 按时间
+            log.info("last error " + error);
             return ResultDTO.of(ResultEnum.ERROR).setData(error);
         }
         return ResultDTO.of(ResultEnum.SUCCESS);
@@ -618,7 +595,6 @@ public class web {
 //    /**
 //     * @Description: 返回通道数，要根据这个通道数组装成 102,101这种通道流去找nvr要数据
 //     * @Param:
-//     * @Author: zzx 774286887@qq.com
 //     * @Date: 2020/5/28
 //     * @Time: 17:06
 //     * @return:
@@ -680,7 +656,7 @@ public class web {
     /**
      * @Description: 返回通道数，要根据这个通道数组装成 102,101这种通道流去找nvr要数据
      * @Param:
-     * @Author: zzx 774286887@qq.com
+     *
      * @Date: 2020/5/28
      * @Time: 17:06
      * @return:
@@ -771,7 +747,7 @@ public class web {
             }
             for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
                 if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
-                    System.out.println(new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
+                    log.info(new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
                     channelList.add("IPCamera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
 
                 }

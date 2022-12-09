@@ -154,6 +154,7 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public String start(String id, String command, boolean hasPath) {
+        
         if (isInit(true)) {
             System.err.println("执行失败，未进行初始化或初始化失败！");
             return null;

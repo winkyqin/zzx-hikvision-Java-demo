@@ -3,8 +3,6 @@ package com.example.hkws.constants;
 /**
  * 错误码常量
  *
- * @创建日期 : 2018年10月25日
- * @作者 : GS_MASTER
  */
 public final class ErrorCodeConsts {
     /**

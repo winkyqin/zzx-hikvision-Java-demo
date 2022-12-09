@@ -6,7 +6,7 @@ import com.example.hkws.service.Linux.HCNetSDK;
  * 错误码
  *
  * @创建日期 : 2018年10月23日
- * @作者 : GS_MASTER
+ *
  */
 public enum HKPlayContorlEnum {
     ZOOM_IN(HCNetSDK.ZOOM_IN, "焦距变大"),

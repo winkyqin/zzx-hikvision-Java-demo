@@ -17,15 +17,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * swagger配置
  *
- * @作者 :
  */
 @Configuration
 @EnableSwagger2
 @ComponentScan(basePackages = "com.example.hkws.controller")
 public class Swagger2Config implements WebMvcConfigurer {
-
-
-
 
     /**
      * 增加swagger的支持
@@ -45,9 +41,7 @@ public class Swagger2Config implements WebMvcConfigurer {
                 //.apis(RequestHandlerSelectors.basePackage("com.example"))
                 .paths(PathSelectors.any())
                 .build();
-
     }
-
 
     private ApiInfo apiInfo() {
         Contact contact = new Contact("cambri", "", "");

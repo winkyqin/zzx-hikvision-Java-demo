@@ -118,6 +118,8 @@ http {
 
 ```
 ffmpeg -re  -rtsp_transport tcp -i "rtsp://admin:password@192.168.123.200/Streaming/Channels/101?transportmode=unicast" -f flv -vcodec h264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 640*360 -q 10 "rtmp://localhost:1935/live/home"
+ffmpeg -re  -rtsp_transport tcp -i "rtsp://admin:kpr123456@192.100.1.97/Streaming/Channels/101?transportmode=unicast" -f flv -vcodec copy -acodec copy -s 1480*500 -crf 15 "rtmp://localhost:1935/live/"Camera1
+rtmp://localhost:1935/live/Camera1
 ```
 
 获取视频源并转码成功如下

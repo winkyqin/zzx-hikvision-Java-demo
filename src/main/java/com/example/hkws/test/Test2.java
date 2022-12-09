@@ -21,6 +21,7 @@ public class Test2 {
         map.put("appName", "test123");
         //map.put("input", "rtsp://admin:admin@192.168.2.236:37779/cam/realmonitor?channel=1&subtype=0");
         map.put("input", "rtsp://admin:kpr123456@192.100.1.97:554/Streaming/Channels/2");
+
         map.put("output", "rtmp://192.168.30.21/live/");
         map.put("codec", "h264");
         map.put("fmt", "flv");

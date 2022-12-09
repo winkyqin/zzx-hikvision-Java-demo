@@ -6,7 +6,7 @@ import com.example.hkws.constants.ErrorCodeConsts;
  * 错误码
  *
  * @创建日期 : 2018年10月23日
- * @作者 : GS_MASTER
+ *
  */
 public enum ResultEnum {
     SUCCESS(ErrorCodeConsts.SUCCESS, "成功"),

@@ -11,7 +11,7 @@ import java.util.Objects;
  * 应用异常
  *
  * @创建日期 : 2018年10月24日
- * @作者 : GS_MASTER
+ *
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -20,7 +20,6 @@ public class GlobalException extends Exception {
     private static final long serialVersionUID = -766379244857861681L;
 
     private Integer code;
-
     private String msg;
 
     public GlobalException(ResultEnum errCode) {
@@ -36,6 +35,7 @@ public class GlobalException extends Exception {
     public GlobalException(Integer code, Map<String, Object> errorMaps) {
         this.code = code == null ? 500 : code;
         this.msg = "";
+
         StringBuilder msg1 = new StringBuilder();
         if (Objects.nonNull(errorMaps) && !errorMaps.isEmpty()) {
             for (Map.Entry<String, Object> entry : errorMaps.entrySet()) {
