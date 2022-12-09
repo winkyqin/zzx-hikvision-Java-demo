@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 事件消息独立发送线程
- *
- * @author eguid
  */
 public class EventMsgNetWorker extends Thread implements EventCallBack {
 

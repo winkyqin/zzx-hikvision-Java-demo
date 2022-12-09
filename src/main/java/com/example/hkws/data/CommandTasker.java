@@ -5,7 +5,6 @@ import com.example.hkws.handler.OutHandler;
 /**
  * 用于存放任务id,任务主进程，任务输出线程
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */

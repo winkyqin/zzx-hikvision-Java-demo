@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 /**
  * 任务消息输出处理器
  *
- * @author eguid
  * @version 2017年10月13日
  * @since jdk1.7
  */

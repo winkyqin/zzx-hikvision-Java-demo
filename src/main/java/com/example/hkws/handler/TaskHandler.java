@@ -6,7 +6,6 @@ import com.example.hkws.data.CommandTasker;
 /**
  * 任务执行接口
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */

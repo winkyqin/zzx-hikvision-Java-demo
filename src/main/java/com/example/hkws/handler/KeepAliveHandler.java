@@ -11,8 +11,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 任务保活处理器（一个后台保活线程，用于处理异常中断的持久任务）
- *
- * @author eguid
  */
 public class KeepAliveHandler extends Thread {
     /**

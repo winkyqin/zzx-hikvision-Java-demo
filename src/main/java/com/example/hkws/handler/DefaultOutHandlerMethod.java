@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 默认任务消息输出处理
  *
- * @author eguid
  * @version 2017年10月13日
  * @since jdk1.7
  */

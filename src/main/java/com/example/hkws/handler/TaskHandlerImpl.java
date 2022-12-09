@@ -11,7 +11,6 @@ import java.io.IOException;
 /**
  * 任务处理实现
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */
@@ -33,13 +32,12 @@ public class TaskHandlerImpl implements TaskHandler {
         CommandTasker tasker = null;
         try {
             tasker = ExecUtil.createTasker(id, command, ohm);
-
             if (CommandManager.config.isDebug()) {
                 log.info(id + " 执行命令行：" + command);
             }
             System.out.println(id + " 执行命令行：" + command);
-
             return tasker;
+
         } catch (IOException e) {
             log.info(id + " 执行命令失败！进程和输出线程已停止" + e.getMessage());
             System.out.println(e.getMessage());

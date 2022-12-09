@@ -2,8 +2,6 @@ package com.example.hkws.config;
 
 /**
  * 程序基础配置
- *
- * @author eguid
  */
 public class ProgramConfig {
 

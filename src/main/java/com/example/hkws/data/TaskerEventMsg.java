@@ -5,8 +5,6 @@ import com.example.hkws.callback.EventCallBackType;
 
 /**
  * 命令行事件消息
- *
- * @author eguid
  */
 public class TaskerEventMsg {
     

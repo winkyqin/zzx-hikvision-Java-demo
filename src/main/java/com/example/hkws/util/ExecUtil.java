@@ -9,8 +9,6 @@ import java.io.IOException;
 
 /**
  * 命令行操作工具类
- *
- * @author eguid
  */
 public class ExecUtil {
 

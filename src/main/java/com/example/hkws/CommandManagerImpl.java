@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * FFmpeg命令操作管理器
  *
- * @author eguid
  * @version 2017年10月13日
  * @since jdk1.7
  */
@@ -159,6 +158,7 @@ public class CommandManagerImpl implements CommandManager {
             System.err.println("执行失败，未进行初始化或初始化失败！");
             return null;
         }
+
         if (id != null && command != null) {
             CommandTasker tasker = taskHandler.process(id, hasPath ? command : config.getPath() + command);
             if (tasker != null) {

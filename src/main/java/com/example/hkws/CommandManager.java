@@ -16,7 +16,6 @@ import static com.example.hkws.util.PropertiesUtil.load;
 /**
  * FFmpeg命令操作管理器，可执行FFmpeg命令/停止/查询任务信息
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */

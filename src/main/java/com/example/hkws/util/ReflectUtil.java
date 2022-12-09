@@ -7,8 +7,6 @@ import java.util.Map;
 
 /**
  * 反射操作工具
- *
- * @author eguid
  */
 public class ReflectUtil {
 

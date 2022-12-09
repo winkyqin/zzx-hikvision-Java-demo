@@ -12,8 +12,6 @@ import java.util.Properties;
 
 /**
  * properties配置文件读取
- *
- * @author eguid
  */
 public class PropertiesUtil {
     /**

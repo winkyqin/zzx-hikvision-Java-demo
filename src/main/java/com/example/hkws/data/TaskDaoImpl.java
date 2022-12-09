@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * 任务信息持久层实现
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */

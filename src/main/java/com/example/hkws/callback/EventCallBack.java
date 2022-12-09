@@ -4,8 +4,6 @@ import com.example.hkws.data.CommandTasker;
 
 /**
  * 事件回调
- *
- * @author eguid
  */
 public interface EventCallBack {
 

@@ -2,8 +2,6 @@ package com.example.hkws.callback;
 
 /**
  * 事件回调类型
- *
- * @author eguid
  */
 public enum EventCallBackType {
     exec,//执行命令后通知

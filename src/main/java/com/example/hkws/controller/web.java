@@ -155,6 +155,7 @@ public class web {
         HttpSession session = request.getSession();
         Object obj_user_id = session.getAttribute("lUserID");
         System.out.println(obj_user_id);
+
         if (obj_user_id == null) {
             return ResultDTO.of(ResultEnum.REQUIRE_LOGIN);
         }

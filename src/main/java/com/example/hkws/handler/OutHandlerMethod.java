@@ -3,7 +3,6 @@ package com.example.hkws.handler;
 /**
  * 输出消息处理
  *
- * @author eguid
  * @version 2017年10月13日
  * @since jdk1.7
  */

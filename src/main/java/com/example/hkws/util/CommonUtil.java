@@ -5,8 +5,6 @@ import java.util.UUID;
 
 /**
  * 公共常用方法工具
- *
- * @author eguid
  */
 public class CommonUtil {
     /**

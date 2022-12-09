@@ -12,7 +12,6 @@ import java.util.Map;
 /**
  * 测试
  *
- * @author eguid
  * @version 2017年10月13日
  * @since jdk1.7
  */

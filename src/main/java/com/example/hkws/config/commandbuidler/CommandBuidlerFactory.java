@@ -2,8 +2,6 @@ package com.example.hkws.config.commandbuidler;
 
 /**
  * 默认流式命令构建器工厂类
- *
- * @author eguid
  */
 public class CommandBuidlerFactory {
 

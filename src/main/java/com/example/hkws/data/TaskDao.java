@@ -5,7 +5,6 @@ import java.util.Collection;
 /**
  * 任务信息持久层接口
  *
- * @author eguid
  * @version 2016年10月29日
  * @since jdk1.7
  */

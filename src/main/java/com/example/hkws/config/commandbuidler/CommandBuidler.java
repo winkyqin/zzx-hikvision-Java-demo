@@ -2,8 +2,6 @@ package com.example.hkws.config.commandbuidler;
 
 /**
  * 流式命令行构建器
- *
- * @author eguid
  */
 public interface CommandBuidler {
 

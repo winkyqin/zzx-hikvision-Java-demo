@@ -5,8 +5,6 @@ import com.example.hkws.CommandManager;
 
 /**
  * 默认流式命令行构建器（非线程安全）
- *
- * @author eguid
  */
 public class DefaultCommandBuidler implements CommandBuidler {
 
