@@ -10,6 +10,7 @@ import com.example.hkws.handler.OutHandler;
  */
 public class CommandTasker {
     private final String id;// 任务id
+    //    private final String ip;// 任务ip
     private final String command;//命令行
     private Process process;// 命令行运行主进程
     private OutHandler thread;// 命令行消息输出子线程
@@ -25,6 +26,10 @@ public class CommandTasker {
         this.process = process;
         this.thread = thread;
     }
+
+//    public String getIp() {
+//        return ip;
+//    }
 
     public String getId() {
         return id;
@@ -52,7 +57,14 @@ public class CommandTasker {
 
     @Override
     public String toString() {
-        return "CommandTasker [id=" + id + ", command=" + command + ", process=" + process + ", thread=" + thread + "]";
+        return "CommandTasker{" +
+                "id='" + id + '\'' +
+                //", ip='" + ip + '\'' +
+                ", command='" + command + '\'' +
+                ", process=" + process +
+                ", thread=" + thread +
+                '}';
     }
+
 
 }

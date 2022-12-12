@@ -44,9 +44,9 @@ public class TaskHandlerImpl implements TaskHandler {
             //运行失败，停止任务
             ExecUtil.stop(tasker);
 
-            if (CommandManager.config.isDebug())
+            if (CommandManager.config.isDebug()){
                 System.err.println(id + " 执行命令失败！进程和输出线程已停止");
-
+            }
             // 出现异常说明开启失败，返回null
             return null;
         }

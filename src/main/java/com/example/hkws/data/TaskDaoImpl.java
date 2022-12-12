@@ -31,6 +31,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public int add(CommandTasker CommandTasker) {
         String id = CommandTasker.getId();
+
         if (id != null && !map.containsKey(id)) {
             map.put(CommandTasker.getId(), CommandTasker);
             if (map.get(id) != null) {

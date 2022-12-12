@@ -33,7 +33,7 @@ import java.util.Objects;
 @Api(description = "海康摄像头模块")
 @Slf4j
 public class web {
-    private static final String TAG = web.class.getName();
+    //private static final String TAG = web.class.getName();
 
     // 如果要打包到linux 记得把HCNetSDK 也要换成 linux版的
     static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;//null??? 为什么有null;//HCNetSDK.INSTANCE;
@@ -89,7 +89,6 @@ public class web {
     public ResultDTO login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) throws GlobalException {
         int lUserID = 0;//用户句柄
         log.info("login:" + loginDTO.toString());
-
         boolean initSuc = hCNetSDK.NET_DVR_Init();
         log.info("initSuc:" + initSuc);
 
@@ -99,15 +98,11 @@ public class web {
         }
 
         //设置异常消息回调
-        FExceptionCallBack_Imp fExceptionCallBack = null;
-        if (fExceptionCallBack == null) {
-            fExceptionCallBack = new FExceptionCallBack_Imp();
-        }
+        FExceptionCallBack_Imp fExceptionCallBack = new FExceptionCallBack_Imp();
         Pointer pUser = null;
         if (!hCNetSDK.NET_DVR_SetExceptionCallBack_V30(0, 0, fExceptionCallBack, pUser)) {
             return null;
         }
-
         log.info("设置异常消息回调成功");
 
         //启动SDK写日志
@@ -171,7 +166,6 @@ public class web {
         //通过id查询这个任务
         CommandTasker info = manager.query(channelName);
         log.info(channelName);
-        log.info(info.toString());
 
         //如果任务没存在，开启视频流
         if (Objects.isNull(info)) {
@@ -735,6 +729,7 @@ public class web {
 
         if (!bRet) {
             //设备不支持,则表示没有IP通道
+            log.info(m_strDeviceInfo.struDeviceV30.toString());
             for (int iChannum = 0; iChannum < m_strDeviceInfo.struDeviceV30.byChanNum; iChannum++) {
                 channelList.add("Camera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
             }
@@ -745,11 +740,11 @@ public class web {
                     channelList.add("Camera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
                 }
             }
+
             for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
                 if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
                     log.info(new String(m_strIpparaCfg.struIPDevInfo[iChannum].struIP.sIpV4));
                     channelList.add("IPCamera" + (iChannum + m_strDeviceInfo.struDeviceV30.byChanNum));
-
                 }
         }
         return channelList;

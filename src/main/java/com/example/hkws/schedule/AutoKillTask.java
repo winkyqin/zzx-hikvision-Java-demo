@@ -34,24 +34,25 @@ public class AutoKillTask {
      * @Time: 11:22
      * @return:
      */
-    @Scheduled(initialDelay = 1000 * 1 * 6, fixedRate = 1000 * 10 * 6)
+    @Scheduled(initialDelay = 1000 * 1, fixedRate = 1000 * 10)//1s 10s
     public void autoKillTask() {
         Collection<CommandTasker> commandTaskers = web.manager.queryAll();
         log.info("定时执行删除task任务");
         System.out.println(commandTaskers);
-        for (CommandTasker c : commandTaskers) {
-            // id就是ip
-            String id = c.getId();
-            // 因为历史任务就会有 history 前缀
-            String ip = id.replace("history", "");
-            try {
-                restTemplate.getForObject("http://" + ip, String.class);
-            } catch (Exception e) {
-                web.manager.stop(ip);
-                log.info(ip + "摄像头访问异常，请检查");
-                log.info(e.getMessage() + ip);
-            }
-        }
+//TODO id is not IP need to fix
+//        for (CommandTasker c : commandTaskers) {
+//            // id就是ip？？？
+//            String id = c.getId();
+//            // 因为历史任务就会有 history 前缀
+//            String ip = id.replace("history", "");
+//            try {
+//                restTemplate.getForObject("http://" + ip, String.class);
+//            } catch (Exception e) {
+//                web.manager.stop(ip);
+//                log.info(ip + "摄像头访问异常，请检查");
+//                log.info(e.getMessage() + ip);
+//            }
+//        }
 
         Iterator taskId = taskIdSet.iterator();
         while (taskId.hasNext()) {
