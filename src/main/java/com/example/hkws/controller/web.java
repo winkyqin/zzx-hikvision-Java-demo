@@ -111,19 +111,23 @@ public class web {
         HCNetSDK.NET_DVR_USER_LOGIN_INFO m_strLoginInfo = new HCNetSDK.NET_DVR_USER_LOGIN_INFO();//设备登录信息
         HCNetSDK.NET_DVR_DEVICEINFO_V40 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V40();//设备信息
 
-        String m_sDeviceIP = "192.100.1.97";//设备ip地址
+        //String m_sDeviceIP = "192.100.1.97";//设备ip地址
+        //String m_sUsername = "admin";//设备用户名
+        //String m_sPassword = "kpr123456";//设备密码
+        String m_sDeviceIP = loginDTO.getIp();
+        String m_sUsername = loginDTO.getAccount();
+        String m_sPassword = loginDTO.getPassword();
+
         m_strLoginInfo.sDeviceAddress = new byte[HCNetSDK.NET_DVR_DEV_ADDRESS_MAX_LEN];
         System.arraycopy(m_sDeviceIP.getBytes(), 0, m_strLoginInfo.sDeviceAddress, 0, m_sDeviceIP.length());
 
-        String m_sUsername = "admin";//设备用户名
         m_strLoginInfo.sUserName = new byte[HCNetSDK.NET_DVR_LOGIN_USERNAME_MAX_LEN];
         System.arraycopy(m_sUsername.getBytes(), 0, m_strLoginInfo.sUserName, 0, m_sUsername.length());
 
-        String m_sPassword = "kpr123456";//设备密码
         m_strLoginInfo.sPassword = new byte[HCNetSDK.NET_DVR_LOGIN_PASSWD_MAX_LEN];
         System.arraycopy(m_sPassword.getBytes(), 0, m_strLoginInfo.sPassword, 0, m_sPassword.length());
 
-        m_strLoginInfo.wPort = 8000; //SDK端口
+        m_strLoginInfo.wPort = 8000; //SDK默认端口
         m_strLoginInfo.bUseAsynLogin = false; //是否异步登录：0- 否，1- 是
         m_strLoginInfo.write();
         lUserID = hCNetSDK.NET_DVR_Login_V40(m_strLoginInfo, m_strDeviceInfo);
@@ -137,9 +141,9 @@ public class web {
         session.setAttribute("m_sDeviceIP", m_sDeviceIP);
         session.setAttribute("lUserID", lUserID);
 
+        // create device channel
         List<String> channelList = CreateDeviceChannel(lUserID, m_strDeviceInfo);
         log.info("channelList" + channelList);
-
         return ResultDTO.of(ResultEnum.SUCCESS).setData(channelList);
     }
 
@@ -258,13 +262,13 @@ public class web {
         List<String> channelList = closeLiveDTO.getChannelList();
         if (channelList.size() != 0) {
             for (String channelName : channelList) {
-                //       设置最多十个视频转码，可以设置大一些，随意的
+                // 设置最多十个视频转码，可以设置大一些，随意的
                 // CommandManager manager=new CommandManagerImpl(10);
                 //通过id查询这个任务
                 CommandTasker info = manager.query(channelName);
-                //       如果任务存在
+                // 如果任务存在
                 if (!Objects.isNull(info)) {
-//                    log.info(info);
+                    log.info(info.toString());
                     try {
                         manager.stop(channelName);
                     } catch (Exception e) {
@@ -283,7 +287,6 @@ public class web {
         String liveUrl = "";
         String channelName = liveDTO.getChannelName();
         String ip = liveDTO.getIp();
-
         // 通过id查询这个任务
         CommandTasker info = manager.query(channelName);
         // 如果任务没存在，开启视频流
@@ -299,7 +302,6 @@ public class web {
         // liveUrl = "rtmp://localhost:1935/live/"+channelName;
         // 下面这个是http-flv版的流,前端显示时加上ip地址即可
         liveUrl = "http://" + currentserver + ":" + videoStreamPort + "/live?port=1935&app=live&stream=" + channelName;
-
         return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
     }
 
@@ -373,9 +375,10 @@ public class web {
         return ResultDTO.of(ResultEnum.SUCCESS);
     }
 
-    //    下载文件版回放 耗时较长，建议使用rtsp协议版
+    //下载文件版回放 耗时较长，建议使用rtsp协议版
     @PostMapping("/getVideoUrl")
-    public ResultDTO playback(@RequestBody PlayBackConDTO playBackConDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException, InterruptedException {
+    public ResultDTO playback(@RequestBody PlayBackConDTO playBackConDTO, HttpServletRequest request,
+                              HttpServletResponse response) throws GlobalException, InterruptedException {
         HttpSession session = request.getSession();
         int lUserID = (int) session.getAttribute("lUserID");
         String sDeviceIP = (String) session.getAttribute("m_sDeviceIP");
@@ -406,13 +409,14 @@ public class web {
             log.info(playBackConDTO.toString());
             log.info("lUserID:" + lUserID);
             log.info("m_iChanShowNum:" + m_iChanShowNum);
+
             String fileName = sDeviceIP + "/" + m_iChanShowNum + "/" + struStartTime.toStringTitle() + ".mp4";
             String sFileName = fileUploadPath + fileName;
             log.info(sFileName);
 
             // 视频下载调用 下载的文件是mpeg-ps 非标准的mpeg-4
-            m_lLoadHandle = hCNetSDK.NET_DVR_GetFileByTime(lUserID, m_iChanShowNum, struStartTime,
-                    struStopTime, sFileName);
+            m_lLoadHandle = hCNetSDK.NET_DVR_GetFileByTime(lUserID, m_iChanShowNum, struStartTime, struStopTime, sFileName);
+
             if (m_lLoadHandle >= 0) {
                 // 开始下载
                 hCNetSDK.NET_DVR_PlayBackControl(m_lLoadHandle, HCNetSDK.NET_DVR_PLAYSTART, 0, null);
@@ -555,7 +559,7 @@ public class web {
         }
     }
 
-    //    @PostMapping("/playControl")
+    @PostMapping("/playControl")
     public ResultDTO playControl(@RequestBody PlayControlDTO playControlDTO, HttpServletRequest request) throws GlobalException {
         HttpSession session = request.getSession();
 
@@ -567,7 +571,7 @@ public class web {
 
         log.info("controlEnum.getCode():" + controlEnum.getCode());
         log.info("playControlDTO:" + playControlDTO.toString());
-        //        开始控制
+        // 开始控制
         playHandle = hCNetSDK.NET_DVR_PTZControl_Other(lUserID, iCannleNum, controlEnum.getCode(), 0);
         if (playHandle == false) {
             Integer error = hCNetSDK.NET_DVR_GetLastError();
@@ -575,7 +579,7 @@ public class web {
             log.info("last error " + error);
             return ResultDTO.of(ResultEnum.ERROR).setData(error);
         }
-        //        停止控制
+        // 停止控制
         playHandle = hCNetSDK.NET_DVR_PTZControl_Other(lUserID, iCannleNum, controlEnum.getCode(), 1);
         if (playHandle == false) {
             Integer error = hCNetSDK.NET_DVR_GetLastError();

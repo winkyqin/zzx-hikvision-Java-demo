@@ -12,7 +12,6 @@ import java.io.IOException;
  * 集中处理跨域
  *
  * @创建日期 2019年3月5日
- * @作者 二狗
  */
 @Component
 public class SimpleCORSFilter implements Filter {
@@ -36,8 +35,8 @@ public class SimpleCORSFilter implements Filter {
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Headers",
                 "Cookie, Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, LANG");
-        System.out.println(req);
-        System.out.println(res);
+        //System.out.println(req);
+        //System.out.println(res);
         chain.doFilter(req, res);
 
     }

@@ -105,6 +105,7 @@ public class OutHandler extends Thread {
                 log.info(id + "开始推流！");
                 System.out.println(id + "开始推流！");
             }
+
             while (desstatus && (msg = br.readLine()) != null) {
                 ohm.parse(id, msg);
                 if (ohm.isbroken()) {

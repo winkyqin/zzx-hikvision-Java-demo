@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
  * 正则表达式
  *
  * @创建日期 2019年1月9日
- * @作者 二狗
  */
 public class RegConsts {
 

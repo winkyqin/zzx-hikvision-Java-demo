@@ -37,7 +37,6 @@ public class TaskHandlerImpl implements TaskHandler {
             }
             System.out.println(id + " 执行命令行：" + command);
             return tasker;
-
         } catch (IOException e) {
             log.info(id + " 执行命令失败！进程和输出线程已停止" + e.getMessage());
             System.out.println(e.getMessage());
