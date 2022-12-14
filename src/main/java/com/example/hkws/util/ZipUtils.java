@@ -29,9 +29,9 @@ public class ZipUtils {
                              boolean KeepDirStructure) throws RuntimeException, Exception {
 
         OutputStream out = new FileOutputStream(new File(outDir));
-
         long start = System.currentTimeMillis();
         ZipOutputStream zos = null;
+
         try {
             zos = new ZipOutputStream(out);
             List<File> sourceFileList = new ArrayList<File>();

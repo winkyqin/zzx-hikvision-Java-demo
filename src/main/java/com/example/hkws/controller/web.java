@@ -187,7 +187,7 @@ public class web {
     }
 
     @PostMapping("/getLiveStreamByIp")
-    @ApiOperation(value = "windows 获取实时视频流", notes = "channelStream:101 代表通道一 主码流。102代表通道一 子码流；子码流比主码流小，但画质会有所下降 ，channelName是通道名，能保证唯一即可")
+    @ApiOperation(value = "windows 获取实时视频流", notes = "channelStream:101 代表通道一 主码流。102代表通道一 子码流；子码流比主码流小，但画质会有所下降，channelName是通道名，能保证唯一即可")
     public ResultDTO getLiveStreamByIp(@RequestBody LiveDTO liveDTO, HttpServletRequest request, HttpServletResponse response) throws GlobalException {
 
         String liveUrl = "";
@@ -210,7 +210,6 @@ public class web {
         } else {
             log.info(channelName + "任务已存在，从任务列表中取出数据返回");
         }
-
         // 如果是window rtmp版就返回 rtmp://localhost:1935/live/\""+channelName
         liveUrl = "rtmp://" + currentserver + ":1935/live/" + channelName;
         // 下面这个是http-flv版的流
@@ -351,18 +350,23 @@ public class web {
 //        return ResultDTO.of(ResultEnum.SUCCESS).setData(liveUrl);
 //    }
 
+    /**
+     *
+     * @param closeLiveDTO
+     * @return
+     */
     @PostMapping("/linux/closeLiveStream")
     @ApiOperation(value = "linux，关闭视频流")
     public ResultDTO linuxCloseLive(@RequestBody CloseLiveDTO closeLiveDTO) {
         List<String> channelList = closeLiveDTO.getChannelList();
         if (channelList.size() != 0) {
             for (String channelName : channelList) {
-                //       设置最多十个视频转码，可以设置大一些，随意的
+                // 设置最多十个视频转码，可以设置大一些，随意的
                 // CommandManager manager=new CommandManagerImpl(10);
                 //通过id查询这个任务
                 CommandTasker info = manager.query(channelName);
                 log.info("/linux/getHistoryStream");
-                //       如果任务存在
+                // 如果任务存在
                 if (!Objects.isNull(info)) {
                     try {
                         manager.stop(channelName);
@@ -455,6 +459,7 @@ public class web {
     @RequestMapping(value = "/videoPlay", method = RequestMethod.GET)
     public void videoPlay(HttpServletRequest request, HttpServletResponse response, @RequestParam String url) {
 //        String path = request.getServletContext().getRealPath(url);
+
         String path = fileUploadPath + url;
         BufferedInputStream bis = null;
         log.info("url" + url);
@@ -559,6 +564,13 @@ public class web {
         }
     }
 
+    /**
+     * 云台控制
+     * @param playControlDTO
+     * @param request
+     * @return
+     * @throws GlobalException
+     */
     @PostMapping("/playControl")
     public ResultDTO playControl(@RequestBody PlayControlDTO playControlDTO, HttpServletRequest request) throws GlobalException {
         HttpSession session = request.getSession();
